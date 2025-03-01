@@ -1,4 +1,4 @@
-import{u as x,a as u,b as g,j as e,B as n,c as h,G as i,d as s,n as r,T as y,e as f}from"./index-BlvmEKfA.js";import{E as v}from"./EventsList-CxVI84n0.js";import{u as j}from"./Event-C-oAqnht.js";const t=r(y)`
+import{u as x,a as u,b as g,j as e,B as n,c as h,G as i,d as s,n as r,T as y,e as f}from"./index-Cg8QlcrD.js";import{E as v}from"./EventsList-BxlZwWcw.js";import{u as j}from"./Event-Cco6Astm.js";const t=r(y)`
     color: #361c00;
     font-family: "IBM Plex Serif";
     position: relative;
