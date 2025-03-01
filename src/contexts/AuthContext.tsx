@@ -5,7 +5,7 @@ type AuthContextType = {
     loadingAuth: boolean;
     setLoadingAuth: Dispatch<SetStateAction<boolean>>;
     isAuth: boolean;
-    handleLogin: (ev: FormEvent<HTMLFormElement>, formData: { email: string; password: string }) => void;
+    handleLogin: (ev: FormEvent<HTMLFormElement>, formData: { email: string; password: string }) => Promise<boolean>;
     handleLogout: () => void;
     getUserData: () => { email: string; name: string; id: number } | null;
 };
@@ -21,18 +21,29 @@ export default function AuthContextProvider({ children }: { children: ReactNode 
 
         setLoadingAuth(true);
 
-        await axiosBase.post("/auth", formData).then((res) => {
-            if (res.status === 200) {
-                console.log(res);
-                localStorage.setItem(
-                    "event-io-userData",
-                    JSON.stringify({ name: res.data.user.name, email: res.data.user.email, id: res.data.user.id })
-                );
-                setIsAuth(true);
-            }
-        });
+        const result = await axiosBase
+            .post("/auth", formData)
+            .then((res) => {
+                if (res.status === 200) {
+                    console.log(res);
+                    localStorage.setItem(
+                        "event-io-userData",
+                        JSON.stringify({ name: res.data.user.name, email: res.data.user.email, id: res.data.user.id })
+                    );
+                    setIsAuth(true);
 
-        setLoadingAuth(false);
+                    return true;
+                }
+
+                return false;
+            })
+            .catch(() => {
+                setLoadingAuth(false);
+
+                return false;
+            });
+
+        return result;
     }
 
     async function handleLogout() {
@@ -64,7 +75,11 @@ export default function AuthContextProvider({ children }: { children: ReactNode 
         checkAuthStatus();
     }, []);
 
-    return <AuthContext.Provider value={{ loadingAuth, setLoadingAuth, isAuth, handleLogin, handleLogout, getUserData }}>{children}</AuthContext.Provider>;
+    return (
+        <AuthContext.Provider value={{ loadingAuth, setLoadingAuth, isAuth, handleLogin, handleLogout, getUserData }}>
+            {children}
+        </AuthContext.Provider>
+    );
 }
 
 export function useAuthContext() {
