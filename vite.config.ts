@@ -11,5 +11,4 @@ export default defineConfig({
     }),
     react(),
   ],
-  base: "/event-io-client"
 })

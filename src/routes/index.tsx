@@ -89,7 +89,7 @@ function HomeComponent() {
     return (
         <Box
             sx={{
-                backgroundImage: `url('/home_waves2.svg')`,
+                backgroundImage: `url('./home_waves2.svg')`,
                 backgroundSize: "70%",
                 backgroundPositionX: "100%",
                 backgroundRepeat: "no-repeat",
