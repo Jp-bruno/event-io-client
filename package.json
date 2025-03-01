@@ -2,13 +2,16 @@
   "name": "client",
   "version": "0.0.0",
   "private": true,
+  "homepage": "https://jp-bruno.github.io/event-io-client",
   "type": "module",
   "scripts": {
     "typecheck": "tsc --noEmit",
     "dev": "vite --port=3001",
     "build": "vite build",
     "serve": "vite preview",
-    "start": "vite"
+    "start": "vite",
+    "predeploy": "npm run build",
+    "deploy": "gh-pages -d dist"
   },
   "devDependencies": {
     "@tanstack/router-plugin": "^1.111.12",
@@ -27,6 +30,7 @@
     "@tanstack/react-router": "^1.111.11",
     "@tanstack/router-devtools": "^1.111.11",
     "axios": "^1.8.1",
+    "gh-pages": "^6.3.0",
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
     "zod": "^3.24.2"
