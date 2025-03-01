@@ -34,7 +34,7 @@ export default function Footer() {
                 <Grid2 container>
                     <Grid2 size={6}>
                         <Link to="/">
-                            <img src={"/default-monochrome.svg"} alt="Event-io" width={150} />
+                            <img src={"./default-monochrome.svg"} alt="Event-io" width={150} />
                         </Link>
                         <Box component="ul" sx={{ paddingLeft: "40px" }}>
                             <FakeLink>
