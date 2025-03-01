@@ -47,7 +47,7 @@ export default function Header() {
         >
             <BaseContainer sx={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
                 <Link to="/">
-                    <img src={"./default-monochrome.svg"} alt="Event-io" width={200} />
+                    <img src={"/default-monochrome.svg"} alt="Event-io" width={200} />
                 </Link>
 
                 <Box>
