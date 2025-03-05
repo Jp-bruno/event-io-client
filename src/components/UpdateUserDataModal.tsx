@@ -17,6 +17,10 @@ export default function UpdateUserDataModal({ user, isOpen, close }: { user: { e
         close();
     }
 
+    function handleSetFormData(field: "name" | "email", value: string) {
+        setFormData((prev) => ({ ...prev, [field]: value }));
+    }
+
     async function handleSubmit(ev: FormEvent<HTMLFormElement>) {
         ev.preventDefault();
 
@@ -34,7 +38,7 @@ export default function UpdateUserDataModal({ user, isOpen, close }: { user: { e
                 }
             })
             .catch((e) => {
-                window.alert(e);
+                window.alert(e.response.data.message);
             });
     }
 
@@ -42,12 +46,12 @@ export default function UpdateUserDataModal({ user, isOpen, close }: { user: { e
         <Modal open={isOpen} onClose={handleClose} sx={{ display: "grid", placeItems: "center" }}>
             <Paper>
                 <Typography sx={{ p: 2, textAlign: "center" }}>Update your info</Typography>
-                
+
                 <Divider />
 
                 <Box component="form" sx={{ p: 2, display: "flex", flexDirection: "column", rowGap: 2 }} onSubmit={handleSubmit}>
-                    <TextField value={formData.name} label="Name" required />
-                    <TextField value={formData.email} label="E-mail" required />
+                    <TextField value={formData.name} onChange={(ev) => handleSetFormData("name", ev.target.value)} label="Name" required />
+                    <TextField value={formData.email} onChange={(ev) => handleSetFormData("email", ev.target.value)} label="E-mail" required />
 
                     <Box sx={{ display: "flex", justifyContent: "space-between", columnGap: 1 }}>
                         <Button fullWidth variant="outlined" color="error" onClick={handleClose}>
