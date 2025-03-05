@@ -2,28 +2,28 @@ import { ReactNode } from "@tanstack/react-router";
 import { Dispatch, SetStateAction, useState, createContext, useContext } from "react";
 
 type LoginModalContextType = {
-    isOpen: boolean
-    openModal: (message?: string) => void;
+    isOpen: "login" | "signup" | null;
+    openModal: (type: "login" | "signup", message?: string) => void;
     closeModal: () => void;
-    message: string
-    setMessage: Dispatch<SetStateAction<string>>
+    message: string;
+    setMessage: Dispatch<SetStateAction<string>>;
 };
 
 export const LoginModalContext = createContext({} as LoginModalContextType);
 
 export default function LoginModalContextProvider({ children }: { children: ReactNode }) {
-    const [isOpen, setOpen] = useState(false);
+    const [isOpen, setOpen] = useState<"login" | "signup" | null>(null);
     const [message, setMessage] = useState("");
 
-    function openModal(message?: string) {
-        setOpen(true);
+    function openModal(type: "login" | "signup", message?: string) {
+        setOpen(type);
         if (message) {
             setMessage(message);
         }
     }
 
     function closeModal() {
-        setOpen(false);
+        setOpen(null);
         setMessage("");
     }
 

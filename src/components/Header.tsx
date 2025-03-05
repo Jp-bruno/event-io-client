@@ -17,7 +17,8 @@ export default function Header() {
     const router = useRouter();
 
     function openLogin() {
-        openModal();
+    function openSignUp() {
+        openModal("signup");
     }
 
     function logout() {

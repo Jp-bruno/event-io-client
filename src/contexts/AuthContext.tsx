@@ -6,6 +6,7 @@ type AuthContextType = {
     setLoadingAuth: Dispatch<SetStateAction<boolean>>;
     isAuth: boolean;
     handleLogin: (ev: FormEvent<HTMLFormElement>, formData: { email: string; password: string }) => Promise<boolean>;
+    handleSignUp: (ev: FormEvent<HTMLFormElement>, formData: { email: string; password: string }) => Promise<boolean>;
     handleLogout: () => void;
     getUserData: () => { email: string; name: string; id: number } | null;
 };
@@ -36,6 +37,47 @@ export default function AuthContextProvider({ children }: { children: ReactNode 
                 }
 
                 return false;
+            })
+            .catch(() => {
+                setLoadingAuth(false);
+
+                return false;
+            });
+
+        return result;
+    }
+
+    async function handleSignUp(ev: FormEvent<HTMLFormElement>, formData: { email: string; password: string }) {
+        ev.preventDefault();
+
+        setLoadingAuth(true);
+
+        const result = await axiosBase
+            .post("/user", formData)
+            .then(async (res) => {
+                const result = await axiosBase
+                    .post("/auth", formData)
+                    .then((res) => {
+                        if (res.status === 200) {
+                            console.log(res);
+                            localStorage.setItem(
+                                "event-io-userData",
+                                JSON.stringify({ name: res.data.user.name, email: res.data.user.email, id: res.data.user.id })
+                            );
+                            setIsAuth(true);
+
+                            return true;
+                        }
+
+                        return false;
+                    })
+                    .catch(() => {
+                        setLoadingAuth(false);
+
+                        return false;
+                    });
+
+                return result;
             })
             .catch(() => {
                 setLoadingAuth(false);
