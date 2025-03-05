@@ -7,6 +7,8 @@ import BaseContainer from "../../components/BaseContainer";
 import EventsList from "../../components/EventsList";
 import { z } from "zod";
 import axiosBase from "../../axios/axiosBase";
+import LoadingPage from "../../components/LoadingPage";
+import PageBase from "../../components/PageBase";
 
 const searchSchema = z.object({
     query: z.string().optional(),
@@ -51,19 +53,11 @@ function RouteComponent() {
     }
 
     if (isLoading) {
-        return null;
+        return <LoadingPage />;
     }
 
     return (
-        <Box
-            sx={{
-                backgroundImage: `url('/home_waves2.svg')`,
-                backgroundSize: "70%",
-                backgroundPositionX: "100%",
-                backgroundRepeat: "no-repeat",
-                backgroundColor: "#F2A90040",
-            }}
-        >
+        <PageBase>
             <BaseContainer sx={{ minHeight: "100vh", display: "grid", placeItems: "center", py: "130px" }}>
                 <Box sx={{ height: "100%", width: "100%" }}>
                     <Box>
@@ -90,6 +84,6 @@ function RouteComponent() {
                     </Box>
                 </Box>
             </BaseContainer>
-        </Box>
+        </PageBase>
     );
 }

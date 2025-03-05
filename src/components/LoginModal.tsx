@@ -5,9 +5,9 @@ import { useLoginModalContext } from "../contexts/LoginModalContext";
 import { useAuthContext } from "../contexts/AuthContext";
 
 export default function LoginModal() {
-    const [formData, setFormData] = useState({ email: "alice@example.com", password: "hashedpassword1" });
+    const [formData, setFormData] = useState({ email: "john.doe@example.com", password: "hashedpassword1" });
 
-    const { isOpen, openModal, closeModal, message, setMessage } = useLoginModalContext();
+    const { isOpen, closeModal, message, setMessage } = useLoginModalContext();
 
     const { loadingAuth, setLoadingAuth, handleLogin } = useAuthContext();
 
@@ -21,7 +21,6 @@ export default function LoginModal() {
     async function login(ev: FormEvent<HTMLFormElement>) {
         const loginSuccess = await handleLogin(ev, formData).then((response) => response);
 
-        console.log({ loginSuccess });
         if (!loginSuccess) {
             setLoadingAuth(false);
             setMessage("Login failed");

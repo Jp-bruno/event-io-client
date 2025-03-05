@@ -11,10 +11,11 @@ import { useAuthContext } from "../../../contexts/AuthContext";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import axiosBase from "../../../axios/axiosBase";
 import TooltipIconButton from "../../../components/TooltipIconButton";
+import LoadingPage from "../../../components/LoadingPage";
+import PageBase from "../../../components/PageBase";
 
 export const Route = createFileRoute("/events/$eventSlug/")({
     component: RouteComponent,
-    
 });
 
 function RouteComponent() {
@@ -32,9 +33,11 @@ function RouteComponent() {
         },
     });
 
-    console.log(event);
-
-    async function handleEnroll() {
+    async function handleAction() {
+        if (!isAuth) {
+            openModal("You need to be logged in to enroll.");
+            return;
+        }
         console.log("oi");
     }
 
@@ -43,40 +46,24 @@ function RouteComponent() {
     }
 
     if (isLoading) {
-        return null;
+        return <LoadingPage />;
     }
 
     if (!event) {
         return (
-            <Box
-                sx={{
-                    backgroundImage: `url('/home_waves2.svg')`,
-                    backgroundSize: "70%",
-                    backgroundPositionX: "100%",
-                    backgroundRepeat: "no-repeat",
-                    backgroundColor: "#F2A90040",
-                }}
-            >
+            <PageBase>
                 <BaseContainer sx={{ minHeight: "100vh", display: "flex", flexDirection: "column", py: "90px" }}>
                     <Link to={".."}>
                         <ArrowBackIcon />
                     </Link>
                     <Typography variant="h5">404 - No event found</Typography>
                 </BaseContainer>
-            </Box>
+            </PageBase>
         );
     }
 
     return (
-        <Box
-            sx={{
-                backgroundImage: `url('/home_waves2.svg')`,
-                backgroundSize: "70%",
-                backgroundPositionX: "100%",
-                backgroundRepeat: "no-repeat",
-                backgroundColor: "#F2A90040",
-            }}
-        >
+        <PageBase>
             <BaseContainer sx={{ minHeight: "100vh", display: "flex", py: "100px", flexDirection: "column" }}>
                 <Paper
                     sx={{
@@ -132,8 +119,8 @@ function RouteComponent() {
                             </Typography>
                             <Divider sx={{ my: 2 }} />
                             <Box sx={{ display: "flex", justifyContent: "space-between", columnGap: 1 }}>
-                                <Button fullWidth variant="contained" onClick={() => (isAuth ? handleEnroll() : openModal("You need to be logged in to enroll."))}>
-                                    Enroll
+                                <Button fullWidth variant="contained" onClick={handleAction}>
+                                    {Boolean(event.is_enrolled) ? "Unenroll" : "Enroll"}
                                 </Button>
                                 <Button fullWidth variant="outlined" endIcon={<ShareIcon />}>
                                     Share
@@ -143,6 +130,6 @@ function RouteComponent() {
                     </Grid2>
                 </Grid2>
             </BaseContainer>
-        </Box>
+        </PageBase>
     );
 }

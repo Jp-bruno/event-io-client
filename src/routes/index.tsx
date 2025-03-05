@@ -67,6 +67,7 @@ import axiosBase from "../axios/axiosBase";
 import { useAuthContext } from "../contexts/AuthContext";
 import { useLoginModalContext } from "../contexts/LoginModalContext";
 import { theme } from "../theme";
+import PageBase from "../components/PageBase";
 
 function HomeComponent() {
     const router = useRouter();
@@ -87,15 +88,7 @@ function HomeComponent() {
     });
 
     return (
-        <Box
-            sx={{
-                backgroundImage: `url('/home_waves2.svg')`,
-                backgroundSize: "70%",
-                backgroundPositionX: "100%",
-                backgroundRepeat: "no-repeat",
-                backgroundColor: "#F2A90040",
-            }}
-        >
+        <PageBase>
             <BaseContainer>
                 <Box sx={{ display: "flex", alignItems: "center", height: "100vh" }}>
                     <Grid2 container sx={{ width: "100%" }} spacing={"auto"}>
@@ -131,6 +124,6 @@ function HomeComponent() {
                     {!isLoading && <EventsList events={events} />}
                 </Box>
             </BaseContainer>
-        </Box>
+        </PageBase>
     );
 }
