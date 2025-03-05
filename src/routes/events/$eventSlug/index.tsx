@@ -42,7 +42,7 @@ function RouteComponent() {
     }
 
     function goBack() {
-        router.navigate({ to: ".." });
+        router.history.back();
     }
 
     if (isLoading) {
