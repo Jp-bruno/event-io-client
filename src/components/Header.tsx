@@ -1,13 +1,10 @@
-import { Box, Button, Menu, MenuItem } from "@mui/material";
-import { FileRoutesByPath, Link, NavigateOptions, useRouter } from "@tanstack/react-router";
+import { Box, Button } from "@mui/material";
+import { Link, useRouter } from "@tanstack/react-router";
 import TooltipIconButton from "./TooltipIconButton";
-import AccountCircleOutlinedIcon from "@mui/icons-material/AccountCircleOutlined";
-import { MouseEvent, useState } from "react";
 import BaseContainer from "./BaseContainer";
 import { useAuthContext } from "../contexts/AuthContext";
 import { useLoginModalContext } from "../contexts/LoginModalContext";
 import LogoutIcon from "@mui/icons-material/Logout";
-import { FileRoutesByTo, FileRouteTypes } from "../routeTree.gen";
 
 export default function Header() {
     const { isAuth, handleLogout } = useAuthContext();
@@ -17,11 +14,15 @@ export default function Header() {
     const router = useRouter();
 
     function openLogin() {
+        openModal("login");
+    }
+
     function openSignUp() {
         openModal("signup");
     }
 
     function logout() {
+        router.navigate({ to: "/" });
         handleLogout();
     }
 
@@ -53,7 +54,7 @@ export default function Header() {
                         <Button variant="outlined" size="small" onClick={() => handleNavigate("/profile")}>
                             Profile
                         </Button>
-                        <TooltipIconButton text="Logout" icon={<LogoutIcon />} cb={logout} sx={{ marginLeft: 5 }} />
+                        <TooltipIconButton text="Sign out" icon={<LogoutIcon />} cb={logout} sx={{ marginLeft: 5 }} />
                     </Box>
                 </BaseContainer>
             </Box>
@@ -76,9 +77,12 @@ export default function Header() {
                     <img src={"/default-monochrome.svg"} alt="Event-io" width={200} />
                 </Link>
 
-                <Box>
+                <Box sx={{ display: "flex", columnGap: 1 }}>
+                    <Button variant="contained" size="small" onClick={openSignUp}>
+                        Sign up
+                    </Button>
                     <Button variant="outlined" size="small" onClick={openLogin}>
-                        Login
+                        Sign in
                     </Button>
                 </Box>
             </BaseContainer>

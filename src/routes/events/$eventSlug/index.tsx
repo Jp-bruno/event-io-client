@@ -39,7 +39,7 @@ function RouteComponent() {
 
     async function handleAction() {
         if (!isAuth) {
-            openModal("You need to be logged in to enroll.");
+            openModal("login", "You need to be logged in to enroll.");
             return;
         }
 
@@ -52,7 +52,7 @@ function RouteComponent() {
         }
 
         await axiosBase.post("/user-events", { userId: user.id, eventId: event.id });
-        
+
         await queryClient.invalidateQueries({ queryKey: [`event-${eventSlug}`] });
     }
 

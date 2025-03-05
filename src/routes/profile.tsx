@@ -1,4 +1,4 @@
-import { createFileRoute } from "@tanstack/react-router";
+import { createFileRoute, useRouter } from "@tanstack/react-router";
 import PageBase from "../components/PageBase";
 import BaseContainer from "../components/BaseContainer";
 import { Box, Button, Grid2, Paper, styled, Typography } from "@mui/material";
@@ -8,6 +8,8 @@ import LoadingPage from "../components/LoadingPage";
 import UpdateUserDataModa from "../components/UpdateUserDataModal";
 import { useState } from "react";
 import UserImage from "../components/UserImage";
+import { useActionConfirmModalContext } from "../contexts/ActionConfirmModalContext";
+import { useAuthContext } from "../contexts/AuthContext";
 
 export const Route = createFileRoute("/profile")({
     component: RouteComponent,
@@ -20,6 +22,11 @@ function RouteComponent() {
             return await axiosBase("/user").then((res) => res.data);
         },
     });
+
+    const router = useRouter();
+
+    const { openConfirmActionModal } = useActionConfirmModalContext();
+    const { handleDeleteAccount } = useAuthContext();
 
     const [updateUserDataModalState, setUpdateUserDataModalState] = useState(false);
 
@@ -37,6 +44,21 @@ function RouteComponent() {
         );
     }
 
+    function handleOnCloseCallback() {
+        router.navigate({ to: "/" });
+    }
+
+    function hadleDeleteAccount() {
+        openConfirmActionModal({
+            title: "Delete account",
+            message: "Are you sure you want to delete your account?",
+            action: handleDeleteAccount,
+            secondaryMessage: "Warning: This will also delete any event that you're hosting",
+            confirmButtonText: "Yes, delete",
+            callbackOnClose: handleOnCloseCallback,
+        });
+    }
+
     return (
         <PageBase>
             <BaseContainer sx={{ py: "100px" }}>
@@ -44,13 +66,14 @@ function RouteComponent() {
                     <Grid2 container>
                         <Grid2 size={12} sx={{ display: "flex", flexDirection: "column", alignItems: "center" }}>
                             <UserImage image={profile.image} />
+
                             <Typography>{profile.name}</Typography>
                             <Typography>{profile.email}</Typography>
 
                             <Button variant="outlined" size="small" onClick={() => setUpdateUserDataModalState(true)} sx={{ mt: 2 }}>
                                 Update your data
                             </Button>
-                            <Button variant="outlined" size="small" color="error" sx={{ mt: 2 }}>
+                            <Button variant="contained" size="small" color="error" sx={{ mt: 2 }} onClick={hadleDeleteAccount}>
                                 Delete my account
                             </Button>
                         </Grid2>

@@ -7,6 +7,7 @@ type AuthContextType = {
     isAuth: boolean;
     handleLogin: (ev: FormEvent<HTMLFormElement>, formData: { email: string; password: string }) => Promise<boolean>;
     handleSignUp: (ev: FormEvent<HTMLFormElement>, formData: { email: string; password: string }) => Promise<boolean>;
+    handleDeleteAccount: () => Promise<void>;
     handleLogout: () => void;
     getUserData: () => { email: string; name: string; id: number } | null;
 };
@@ -95,8 +96,16 @@ export default function AuthContextProvider({ children }: { children: ReactNode 
         });
     }
 
+    async function handleDeleteAccount() {
+        const { id } = getUserData();
+        await axiosBase.delete(`/user/${id}`).then(() => {
+            localStorage.removeItem("event-io-userData");
+            setIsAuth(false);
+        });
+    }
+
     function getUserData() {
-        return JSON.parse("event-io-userData") ?? null;
+        return JSON.parse(localStorage.getItem("event-io-userData")!) ?? null;
     }
 
     useEffect(() => {
@@ -118,7 +127,9 @@ export default function AuthContextProvider({ children }: { children: ReactNode 
     }, []);
 
     return (
-        <AuthContext.Provider value={{ loadingAuth, setLoadingAuth, isAuth, handleLogin, handleLogout, getUserData }}>
+        <AuthContext.Provider
+            value={{ loadingAuth, setLoadingAuth, isAuth, handleLogin, handleSignUp, handleLogout, getUserData, handleDeleteAccount }}
+        >
             {children}
         </AuthContext.Provider>
     );
