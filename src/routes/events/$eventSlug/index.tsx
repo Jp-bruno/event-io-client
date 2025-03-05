@@ -1,4 +1,4 @@
-import { useQuery } from "@tanstack/react-query";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { createFileRoute, Link, useRouter } from "@tanstack/react-router";
 import { Box, Button, Divider, Grid2, Paper, Typography } from "@mui/material";
 import BaseContainer from "../../../components/BaseContainer";
@@ -21,6 +21,8 @@ export const Route = createFileRoute("/events/$eventSlug/")({
 function RouteComponent() {
     const { eventSlug } = Route.useParams();
 
+    const queryClient = useQueryClient();
+
     const { openModal } = useLoginModalContext();
     const { isAuth } = useAuthContext();
 
@@ -33,12 +35,25 @@ function RouteComponent() {
         },
     });
 
+    const user = JSON.parse(localStorage.getItem("event-io-userData") as string);
+
     async function handleAction() {
         if (!isAuth) {
             openModal("You need to be logged in to enroll.");
             return;
         }
-        console.log("oi");
+
+        if (event.is_enrolled) {
+            await axiosBase.delete(`/user-events/${user.id}/${event.id}`);
+
+            await queryClient.invalidateQueries({ queryKey: [`event-${eventSlug}`] });
+
+            return;
+        }
+
+        await axiosBase.post("/user-events", { userId: user.id, eventId: event.id });
+        
+        await queryClient.invalidateQueries({ queryKey: [`event-${eventSlug}`] });
     }
 
     function goBack() {
@@ -119,7 +134,8 @@ function RouteComponent() {
                             </Typography>
                             <Divider sx={{ my: 2 }} />
                             <Box sx={{ display: "flex", justifyContent: "space-between", columnGap: 1 }}>
-                                <Button fullWidth variant="contained" onClick={handleAction}>
+                                <Button fullWidth variant="contained" onClick={handleAction} disabled={user?.id === event.host_id}>
+                                    {/*TODO - IF THE USER IS THE EVENT HOST THIS SHOULD BE A BUTTON TO EDIT THE EVENT DATA*/}
                                     {Boolean(event.is_enrolled) ? "Unenroll" : "Enroll"}
                                 </Button>
                                 <Button fullWidth variant="outlined" endIcon={<ShareIcon />}>
