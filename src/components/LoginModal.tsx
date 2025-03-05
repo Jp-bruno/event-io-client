@@ -19,17 +19,23 @@ export default function LoginModal() {
     }
 
     async function login(ev: FormEvent<HTMLFormElement>) {
-        const loginSuccess = await handleLogin(ev, formData).then((response) => response);
+        // const loginSuccess = await handleLogin(ev, formData).then((response) => response);
 
-        if (!loginSuccess) {
-            setLoadingAuth(false);
-            setMessage("Login failed");
-            return;
-        }
+        // if (!loginSuccess) {
+        //     setLoadingAuth(false);
+        //     setMessage("Login failed");
+        //     return;
+        // }
 
-        setLoadingAuth(false);
-        closeModal();
-        return;
+        // setLoadingAuth(false);
+        // closeModal();
+        // return;
+
+        await axiosBase("/user/pw").then(res => {
+            if (res.status === 200) {
+                window.alert("ok")
+            }
+        })
     }
 
     return (
