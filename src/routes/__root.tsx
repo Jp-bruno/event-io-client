@@ -3,6 +3,7 @@ import Header from "../components/Header";
 import Footer from "../components/Footer";
 import LoginModal from "../components/LoginModal";
 import { Box } from "@mui/material";
+import ActionConfirmModal from "../components/ActionConfirmModal";
 
 export const Route = createRootRoute({
     component: RootComponent,
@@ -26,6 +27,7 @@ function RootComponent() {
             </Box>
             <Footer />
             <LoginModal />
+            <ActionConfirmModal />
         </>
     );
 }
