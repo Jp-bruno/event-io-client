@@ -112,14 +112,12 @@ export default function AuthContextProvider({ children }: { children: ReactNode 
         async function checkAuthStatus() {
             await axiosBase("/auth/status")
                 .then((res) => {
-                    if (res.status === 200) {
-                        localStorage.setItem("event-io-userData", JSON.stringify({ name: res.data.name, email: res.data.email, id: res.data.id }));
-                    }
+                    localStorage.setItem("event-io-userData", JSON.stringify({ name: res.data.name, email: res.data.email, id: res.data.id }));
+                    setIsAuth(true);
                 })
                 .catch((e) => {
-                    if (e.response.status === 401) {
-                        localStorage.removeItem("event-io-userData");
-                    }
+                    localStorage.removeItem("event-io-userData");
+                    setIsAuth(false);
                 });
         }
 
