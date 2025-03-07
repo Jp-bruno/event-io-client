@@ -19,6 +19,17 @@ const searchSchema = z.object({
 export const Route = createFileRoute("/my-events")({
     component: RouteComponent,
     validateSearch: searchSchema,
+    beforeLoad: async () => {
+        await axiosBase("/auth/status")
+            .then((res) => {
+                return
+            })
+            .catch((e) => {
+                console.log("aqui1 no beforeLoad")
+                localStorage.removeItem("event-io-userData");
+                window.location.replace("/")
+            });
+    },
 });
 
 function RouteComponent() {

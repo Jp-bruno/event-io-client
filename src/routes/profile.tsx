@@ -13,6 +13,17 @@ import { useAuthContext } from "../contexts/AuthContext";
 
 export const Route = createFileRoute("/profile")({
     component: RouteComponent,
+    beforeLoad: async () => {
+        await axiosBase("/auth/status")
+            .then((res) => {
+                return;
+            })
+            .catch((e) => {
+                console.log("aqui1 no beforeLoad");
+                localStorage.removeItem("event-io-userData");
+                window.location.replace("/");
+            });
+    },
 });
 
 function RouteComponent() {
