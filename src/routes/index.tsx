@@ -108,7 +108,7 @@ function HomeComponent() {
                                     variant="contained"
                                     color={"secondary"}
                                     size="large"
-                                    onClick={() => (isAuth ? handleClick("/create-event") : openModal("login", "You need to be logged in to create a event."))}
+                                    onClick={() => (isAuth ? handleClick("/my-events") : openModal("login", "You need to be logged in to create a event."))}
                                 >
                                     Create your event
                                 </Button>

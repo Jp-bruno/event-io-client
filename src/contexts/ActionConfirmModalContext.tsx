@@ -9,7 +9,7 @@ type ActionConfirmModalContextType = {
     message: string;
     secondaryMessage?: string | null;
     confirmButtonText?: string;
-    callbackOnClose?: null | (() => void);
+    callbackOnEndAction?: null | (() => void);
 };
 
 type ActionConfirmModalStateType = {
@@ -19,7 +19,7 @@ type ActionConfirmModalStateType = {
     action: null | (() => Promise<void>);
     secondaryMessage?: string | null;
     confirmButtonText?: string;
-    callbackOnClose?: null | (() => void);
+    callbackOnEndAction?: null | (() => void);
 };
 
 export const ActionConfirmModalContext = createContext({} as ActionConfirmModalContextType);
@@ -32,7 +32,7 @@ export default function ActionConfirmModalContextProvider({ children }: { childr
         action: null,
         secondaryMessage: null,
         confirmButtonText: "Confirm",
-        callbackOnClose: null,
+        callbackOnEndAction: null,
     });
 
     function closeConfirmActionModal() {
@@ -45,7 +45,7 @@ export default function ActionConfirmModalContextProvider({ children }: { childr
                 action: null,
                 secondaryMessage: null,
                 confirmButtonText: "Confirm",
-                callbackOnClose: null,
+                callbackOnEndAction: null,
             };
         });
     }
@@ -56,7 +56,7 @@ export default function ActionConfirmModalContextProvider({ children }: { childr
         action,
         secondaryMessage,
         confirmButtonText,
-        callbackOnClose,
+        callbackOnEndAction,
     }: Omit<ActionConfirmModalStateType, "isOpen">) {
         setActionConfirmModalState(() => {
             return {
@@ -66,7 +66,7 @@ export default function ActionConfirmModalContextProvider({ children }: { childr
                 action: action ?? null,
                 secondaryMessage: secondaryMessage ?? null,
                 confirmButtonText: confirmButtonText ? confirmButtonText : "Confirm",
-                callbackOnClose: callbackOnClose ?? null,
+                callbackOnEndAction: callbackOnEndAction ?? null,
             };
         });
     }
@@ -82,7 +82,7 @@ export default function ActionConfirmModalContextProvider({ children }: { childr
                 message: state.message,
                 secondaryMessage: state.secondaryMessage,
                 confirmButtonText: state.confirmButtonText,
-                callbackOnClose: state.callbackOnClose,
+                callbackOnEndAction: state.callbackOnEndAction,
             }}
         >
             {children}

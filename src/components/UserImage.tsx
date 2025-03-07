@@ -6,10 +6,10 @@ import AddAPhotoIcon from "@mui/icons-material/AddAPhoto";
 const StyledBox = styled(Box)`
     width: 100px;
     height: 100px;
-    border: solid 1px #00000050;
     border-radius: 500px;
     position: relative;
     cursor: pointer;
+    background-color: #00000050;
 
     .no-image,
     .has-image {

@@ -3,16 +3,12 @@ import { useActionConfirmModalContext } from "../contexts/ActionConfirmModalCont
 import { useState } from "react";
 
 export default function ActionConfirmModal() {
-    const { isOpen, title, message, secondaryMessage, closeConfirmActionModal, confirmButtonText, action, callbackOnClose } =
+    const { isOpen, title, message, secondaryMessage, closeConfirmActionModal, confirmButtonText, action, callbackOnEndAction } =
         useActionConfirmModalContext();
 
     const [awaitAction, setAwaitAction] = useState(false);
 
     function handleClose() {
-        if (callbackOnClose) {
-            callbackOnClose();
-        }
-
         closeConfirmActionModal();
     }
 
@@ -22,6 +18,9 @@ export default function ActionConfirmModal() {
 
             await action().then(() => {
                 handleClose();
+                if (callbackOnEndAction) {
+                    callbackOnEndAction();
+                }
                 setAwaitAction(false);
             });
         }
@@ -52,7 +51,7 @@ export default function ActionConfirmModal() {
                             )}
                         </Box>
 
-                        <Box sx={{ display: "flex", columnGap: 1 }}>
+                        <Box sx={{ display: "flex", columnGap: 1, mt: 2 }}>
                             <Button fullWidth variant="outlined" color="error" onClick={handleClose} disabled={awaitAction}>
                                 Cancel
                             </Button>

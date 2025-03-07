@@ -44,7 +44,7 @@ function RouteComponent() {
         );
     }
 
-    function handleOnCloseCallback() {
+    function handleOnEndActionCallback() {
         router.navigate({ to: "/" });
     }
 
@@ -55,7 +55,7 @@ function RouteComponent() {
             action: handleDeleteAccount,
             secondaryMessage: "Warning: This will also delete any event that you're hosting",
             confirmButtonText: "Yes, delete",
-            callbackOnClose: handleOnCloseCallback,
+            callbackOnEndAction: handleOnEndActionCallback,
         });
     }
 

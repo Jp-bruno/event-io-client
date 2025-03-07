@@ -13,6 +13,7 @@ import axiosBase from "../../../axios/axiosBase";
 import TooltipIconButton from "../../../components/TooltipIconButton";
 import LoadingPage from "../../../components/LoadingPage";
 import PageBase from "../../../components/PageBase";
+import { useActionConfirmModalContext } from "../../../contexts/ActionConfirmModalContext";
 
 export const Route = createFileRoute("/events/$eventSlug/")({
     component: RouteComponent,
@@ -25,6 +26,7 @@ function RouteComponent() {
 
     const { openModal } = useLoginModalContext();
     const { isAuth } = useAuthContext();
+    const { openConfirmActionModal } = useActionConfirmModalContext();
 
     const router = useRouter();
 
@@ -36,6 +38,16 @@ function RouteComponent() {
     });
 
     const user = JSON.parse(localStorage.getItem("event-io-userData") as string);
+
+    async function hanleDeleteEvent() {
+        openConfirmActionModal({
+            action: async () => await axiosBase.delete(`/event/${event.id}`),
+            message: "Are you sure you want to delete this event?",
+            title: "Delete event",
+            confirmButtonText: "Yes, delete event",
+            callbackOnEndAction: () => router.navigate({ to: "/my-events" }),
+        });
+    }
 
     async function handleAction() {
         if (!isAuth) {
@@ -135,13 +147,23 @@ function RouteComponent() {
                             <Divider sx={{ my: 2 }} />
                             <Box sx={{ display: "flex", justifyContent: "space-between", columnGap: 1 }}>
                                 <Button fullWidth variant="contained" onClick={handleAction} disabled={user?.id === event.host_id}>
-                                    {/*TODO - IF THE USER IS THE EVENT HOST THIS SHOULD BE A BUTTON TO EDIT THE EVENT DATA*/}
                                     {Boolean(event.is_enrolled) ? "Unenroll" : "Enroll"}
                                 </Button>
                                 <Button fullWidth variant="outlined" endIcon={<ShareIcon />}>
                                     Share
                                 </Button>
                             </Box>
+                            {user?.id === event.host_id && (
+                                <>
+                                    {/*TODO - MODAL TO EDIT THE EVENT DATA*/}
+                                    <Button fullWidth variant="contained" sx={{ mt: 1 }}>
+                                        Update event data
+                                    </Button>
+                                    <Button fullWidth variant="contained" color="error" sx={{ mt: 1 }} onClick={hanleDeleteEvent}>
+                                        Delete
+                                    </Button>
+                                </>
+                            )}
                         </Paper>
                     </Grid2>
                 </Grid2>

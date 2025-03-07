@@ -1,4 +1,4 @@
-import { Box, Button, LinearProgress, Modal, Paper, TextField, Typography, Zoom } from "@mui/material";
+import { Box, Button, LinearProgress, Modal, Paper, TextField, Tooltip, Typography, Zoom } from "@mui/material";
 import { FormEvent, useState } from "react";
 import { useLoginModalContext } from "../contexts/LoginModalContext";
 import { useAuthContext } from "../contexts/AuthContext";
@@ -121,6 +121,13 @@ export default function LoginModal() {
                                 <Button variant="outlined" size="small" onClick={closeModal}>
                                     Cancel
                                 </Button>
+                                {isOpen === "login" && (
+                                    <Tooltip title="Feature not ready yet">
+                                        <Button variant="text" size="small">
+                                            Forgot password?
+                                        </Button>
+                                    </Tooltip>
+                                )}
                             </Box>
                         )}
                     </Box>

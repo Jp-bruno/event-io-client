@@ -2,13 +2,15 @@ import { createFileRoute, useRouter } from "@tanstack/react-router";
 import PageBase from "../components/PageBase";
 import BaseContainer from "../components/BaseContainer";
 import { z } from "zod";
-import { Box, Paper, OutlinedInput, InputAdornment, Typography } from "@mui/material";
+import { Box, Paper, OutlinedInput, InputAdornment, Typography, Button } from "@mui/material";
 import { useQueryClient, useQuery } from "@tanstack/react-query";
 import { useState, FormEvent } from "react";
 import axiosBase from "../axios/axiosBase";
 import EventsList from "../components/EventsList";
 import SearchIcon from "@mui/icons-material/Search";
 import LoadingPage from "../components/LoadingPage";
+import { Add } from "@mui/icons-material";
+import CreateEventModal from "../components/CreateEventModal";
 
 const searchSchema = z.object({
     query: z.string().optional(),
@@ -23,6 +25,8 @@ function RouteComponent() {
     const { query } = Route.useSearch();
 
     const [queryString, setQueryString] = useState(query ?? "");
+
+    const [createEventModalState, setCreateEventModalState] = useState(false);
 
     const queryClient = useQueryClient();
 
@@ -74,6 +78,11 @@ function RouteComponent() {
                                 }
                             />
                         </Paper>
+                        <Box sx={{ mt: 2 }}>
+                            <Button variant="contained" endIcon={<Add />} onClick={() => setCreateEventModalState(true)}>
+                                New event
+                            </Button>
+                        </Box>
                     </Box>
                     <Box sx={{ display: "flex", flexDirection: "column", rowGap: 4, mt: 4 }}>
                         <Typography variant="h5" color="primary.dark">
@@ -83,6 +92,7 @@ function RouteComponent() {
                         {queriedEvents && queriedEvents.length === 0 && <Typography>Your search returned no results.</Typography>}
                     </Box>
                 </Box>
+                <CreateEventModal isOpen={createEventModalState} close={() => setCreateEventModalState(false)} />
             </BaseContainer>
         </PageBase>
     );
