@@ -5,17 +5,16 @@ import axiosBase from "../axios/axiosBase";
 import axios from "axios";
 import { useQueryClient } from "@tanstack/react-query";
 import { useAlertContext } from "../contexts/AlertContext";
+import { EventType } from "../types";
 
-export default function UpdateEventModal({ isOpen, close, event }: { isOpen: boolean; close: () => void, event }) {
+export default function UpdateEventModal({ isOpen, close, event }: { isOpen: boolean; close: () => void; event: EventType }) {
     const [formData, setFormData] = useState({
         title: event.title ?? "",
         description: event.description ?? "",
         resume: event.resume ?? "",
         location: event.location ?? "",
-        date: event.date ?? "",
+        date: event.date ? new Date(event.date).toISOString().slice(0, 16) : null,
     });
-
-    console.log({formData})
 
     const [thumbnailProgress, setThumbnailProgress] = useState<null | number>(null);
     const [bannerProgress, setBannerProgress] = useState<null | number>(null);
@@ -45,6 +44,7 @@ export default function UpdateEventModal({ isOpen, close, event }: { isOpen: boo
 
         const body = {
             ...formData,
+            id: event.id,
         };
 
         if (thumbnailFile) {
@@ -70,7 +70,7 @@ export default function UpdateEventModal({ isOpen, close, event }: { isOpen: boo
                 }
 
                 if (bannerFile && res.data.bannerSignedUrl) {
-                    await axios.put(res.data.bannerSignedUrl, thumbnailFile, {
+                    await axios.put(res.data.bannerSignedUrl, bannerFile, {
                         headers: { "Content-Type": bannerFile.type },
                         onUploadProgress(progressEvent) {
                             let progress: number = Math.round((progressEvent.loaded * 100) / progressEvent.total!);
@@ -81,19 +81,19 @@ export default function UpdateEventModal({ isOpen, close, event }: { isOpen: boo
                 }
             })
             .then(async () => {
-                await queryClient.invalidateQueries({ queryKey: ["user-events"] });
+                await queryClient.invalidateQueries({ queryKey: [`event-${event.slug}`] });
                 setAwaitAction(false);
-                handleCancel();
+                close()
                 openAlert({
                     title: "Success",
-                    message: "Event successfully created",
+                    message: "Event successfully updated",
                 });
             })
             .catch((e) => {
                 setAwaitAction(false);
                 openAlert({
                     title: "Error",
-                    message: "There was a error while creating your event",
+                    message: "There was a error while updating your event",
                     severity: "error",
                 });
             });
@@ -101,11 +101,11 @@ export default function UpdateEventModal({ isOpen, close, event }: { isOpen: boo
 
     function handleCancel() {
         setFormData({
-            title: "",
-            description: "",
-            resume: "",
-            location: "",
-            date: "",
+            title: event.title,
+            description: event.description ?? "",
+            resume: event.resume ?? "",
+            location: event.location ?? "",
+            date: event.date ? new Date(event.date).toISOString().slice(0, 16) : null,
         });
 
         close();
