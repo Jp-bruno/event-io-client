@@ -1,12 +1,17 @@
 import { Box, Button, Divider, Modal, Paper, TextField, Typography } from "@mui/material";
 import { FormEvent, useState } from "react";
 import axiosBase from "../axios/axiosBase";
+import { useAlertContext } from "../contexts/AlertContext";
+import { useQueryClient } from "@tanstack/react-query";
 
 export default function UpdateUserDataModal({ user, isOpen, close }: { user: { email: string; name: string }; isOpen: boolean; close: () => void }) {
     const [formData, setFormData] = useState({
         name: user.name,
         email: user.email,
     });
+
+    const { openAlert } = useAlertContext();
+    const queryClient = useQueryClient();
 
     function handleClose() {
         setFormData({
@@ -31,14 +36,23 @@ export default function UpdateUserDataModal({ user, isOpen, close }: { user: { e
 
         await axiosBase
             .put("/user", formData)
-            .then((res) => {
-                if (res.status === 200) {
-                    close();
-                    return;
-                }
+            .then(async (res) => {
+                close();
+                openAlert({
+                    title: "Success",
+                    message: "Your data was successfully updated",
+                    severity: "success",
+                });
+                localStorage.setItem("event-io-userData", JSON.stringify(res.data))
+                await queryClient.invalidateQueries({ queryKey: ["profile"] });
+                return;
             })
             .catch((e) => {
-                window.alert(e.response.data.message);
+                openAlert({
+                    title: "Error",
+                    message: "There was a error while trying to update your data",
+                    severity: "error",
+                });
             });
     }
 

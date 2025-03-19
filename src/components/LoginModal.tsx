@@ -2,6 +2,7 @@ import { Box, Button, LinearProgress, Modal, Paper, TextField, Tooltip, Typograp
 import { FormEvent, useState } from "react";
 import { useLoginModalContext } from "../contexts/LoginModalContext";
 import { useAuthContext } from "../contexts/AuthContext";
+import { useAlertContext } from "../contexts/AlertContext";
 
 export default function LoginModal() {
     const { isOpen, closeModal, message, setMessage } = useLoginModalContext();
@@ -13,6 +14,7 @@ export default function LoginModal() {
     });
 
     const { loadingAuth, setLoadingAuth, handleSignUp, handleLogin } = useAuthContext();
+    const { openAlert } = useAlertContext();
 
     function handleSetFormData(field: "name" | "email" | "password", value: string) {
         setFormData((prev) => ({

@@ -4,6 +4,7 @@ import Footer from "../components/Footer";
 import LoginModal from "../components/LoginModal";
 import { Box } from "@mui/material";
 import ActionConfirmModal from "../components/ActionConfirmModal";
+import CustomAlert from "../components/CustomAlert";
 
 export const Route = createRootRoute({
     component: RootComponent,
@@ -28,6 +29,7 @@ function RootComponent() {
             <Footer />
             <LoginModal />
             <ActionConfirmModal />
+            <CustomAlert />
         </>
     );
 }

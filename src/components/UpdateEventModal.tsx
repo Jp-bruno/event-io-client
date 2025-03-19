@@ -6,14 +6,16 @@ import axios from "axios";
 import { useQueryClient } from "@tanstack/react-query";
 import { useAlertContext } from "../contexts/AlertContext";
 
-export default function CreateEventModal({ isOpen, close }: { isOpen: boolean; close: () => void }) {
+export default function UpdateEventModal({ isOpen, close, event }: { isOpen: boolean; close: () => void, event }) {
     const [formData, setFormData] = useState({
-        title: "",
-        description: "",
-        resume: "",
-        location: "",
-        date: "",
+        title: event.title ?? "",
+        description: event.description ?? "",
+        resume: event.resume ?? "",
+        location: event.location ?? "",
+        date: event.date ?? "",
     });
+
+    console.log({formData})
 
     const [thumbnailProgress, setThumbnailProgress] = useState<null | number>(null);
     const [bannerProgress, setBannerProgress] = useState<null | number>(null);
@@ -54,7 +56,7 @@ export default function CreateEventModal({ isOpen, close }: { isOpen: boolean; c
         }
 
         await axiosBase
-            .post("/event", body)
+            .put("/event", body)
             .then(async (res) => {
                 if (thumbnailFile && res.data.thumbnailSignedUrl) {
                     await axios.put(res.data.thumbnailSignedUrl, thumbnailFile, {
@@ -113,7 +115,7 @@ export default function CreateEventModal({ isOpen, close }: { isOpen: boolean; c
         <Modal open={isOpen} onClose={handleCancel} sx={{ display: "grid", placeItems: "center" }}>
             <Zoom in={isOpen}>
                 <Paper sx={{ maxWidth: "500px" }}>
-                    <Typography sx={{ p: 2, pb: 0, textAlign: "center" }}>Host new event</Typography>
+                    <Typography sx={{ p: 2, pb: 0, textAlign: "center" }}>Update event data</Typography>
 
                     <Divider sx={{ my: 2 }} />
 

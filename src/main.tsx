@@ -1,4 +1,3 @@
-import React from "react";
 import ReactDOM from "react-dom/client";
 import { RouterProvider, createRouter } from "@tanstack/react-router";
 import { routeTree } from "./routeTree.gen";
@@ -8,6 +7,7 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import LoginModalStateProvider from "./contexts/LoginModalContext";
 import AuthContextProvider from "./contexts/AuthContext";
 import ActionConfirmModalContextProvider from "./contexts/ActionConfirmModalContext";
+import AlertContextProvider from "./contexts/AlertContext";
 
 // Set up a Router instance
 const router = createRouter({
@@ -31,13 +31,15 @@ if (!rootElement.innerHTML) {
     root.render(
         <QueryClientProvider client={queryClient}>
             <ThemeProvider theme={theme}>
-                <AuthContextProvider>
-                    <LoginModalStateProvider>
-                        <ActionConfirmModalContextProvider>
-                            <RouterProvider router={router} />
-                        </ActionConfirmModalContextProvider>
-                    </LoginModalStateProvider>
-                </AuthContextProvider>
+                <AlertContextProvider>
+                    <AuthContextProvider>
+                        <LoginModalStateProvider>
+                            <ActionConfirmModalContextProvider>
+                                <RouterProvider router={router} />
+                            </ActionConfirmModalContextProvider>
+                        </LoginModalStateProvider>
+                    </AuthContextProvider>
+                </AlertContextProvider>
             </ThemeProvider>
         </QueryClientProvider>
     );

@@ -14,6 +14,8 @@ import TooltipIconButton from "../../../components/TooltipIconButton";
 import LoadingPage from "../../../components/LoadingPage";
 import PageBase from "../../../components/PageBase";
 import { useActionConfirmModalContext } from "../../../contexts/ActionConfirmModalContext";
+import { useState } from "react";
+import UpdateEventModal from "../../../components/UpdateEventModal";
 
 export const Route = createFileRoute("/events/$eventSlug/")({
     component: RouteComponent,
@@ -29,6 +31,9 @@ function RouteComponent() {
     const { openConfirmActionModal } = useActionConfirmModalContext();
 
     const router = useRouter();
+
+    const [awaitAction, setAwaitAction] = useState(false);
+    const [updateEventModal, setUpdateEventModal] = useState(false);
 
     const { data: event, isLoading } = useQuery({
         queryKey: [`event-${eventSlug}`],
@@ -55,10 +60,14 @@ function RouteComponent() {
             return;
         }
 
+        setAwaitAction(true);
+
         if (event.is_enrolled) {
             await axiosBase.delete(`/user-events/${user.id}/${event.id}`);
 
             await queryClient.invalidateQueries({ queryKey: [`event-${eventSlug}`] });
+
+            setAwaitAction(false);
 
             return;
         }
@@ -66,6 +75,8 @@ function RouteComponent() {
         await axiosBase.post("/user-events", { userId: user.id, eventId: event.id });
 
         await queryClient.invalidateQueries({ queryKey: [`event-${eventSlug}`] });
+
+        setAwaitAction(false);
     }
 
     function goBack() {
@@ -146,7 +157,7 @@ function RouteComponent() {
                             </Typography>
                             <Divider sx={{ my: 2 }} />
                             <Box sx={{ display: "flex", justifyContent: "space-between", columnGap: 1 }}>
-                                <Button fullWidth variant="contained" onClick={handleAction} disabled={user?.id === event.host_id}>
+                                <Button fullWidth variant="contained" onClick={handleAction} disabled={user?.id === event.host_id || awaitAction}>
                                     {Boolean(event.is_enrolled) ? "Unenroll" : "Enroll"}
                                 </Button>
                                 <Button fullWidth variant="outlined" endIcon={<ShareIcon />}>
@@ -156,12 +167,13 @@ function RouteComponent() {
                             {user?.id === event.host_id && (
                                 <>
                                     {/*TODO - MODAL TO EDIT THE EVENT DATA*/}
-                                    <Button fullWidth variant="contained" sx={{ mt: 1 }}>
+                                    <Button fullWidth variant="contained" sx={{ mt: 1 }} onClick={() => setUpdateEventModal(true)}>
                                         Update event data
                                     </Button>
                                     <Button fullWidth variant="contained" color="error" sx={{ mt: 1 }} onClick={hanleDeleteEvent}>
                                         Delete
                                     </Button>
+                                    <UpdateEventModal isOpen={updateEventModal} close={() => setUpdateEventModal(false)} event={event} />
                                 </>
                             )}
                         </Paper>

@@ -1,5 +1,6 @@
 import { createContext, Dispatch, FormEvent, ReactNode, SetStateAction, useContext, useEffect, useState } from "react";
 import axiosBase from "../axios/axiosBase";
+import { useAlertContext } from "./AlertContext";
 
 type AuthContextType = {
     loadingAuth: boolean;
@@ -17,6 +18,7 @@ const AuthContext = createContext({} as AuthContextType);
 export default function AuthContextProvider({ children }: { children: ReactNode }) {
     const [loadingAuth, setLoadingAuth] = useState(false);
     const [isAuth, setIsAuth] = useState(Boolean(localStorage.getItem("event-io-userData")));
+    const { openAlert } = useAlertContext();
 
     async function handleLogin(ev: FormEvent<HTMLFormElement>, formData: { email: string; password: string }) {
         ev.preventDefault();
@@ -37,11 +39,15 @@ export default function AuthContextProvider({ children }: { children: ReactNode 
                     return true;
                 }
 
-                return false;
+                return false
             })
-            .catch(() => {
+            .catch((e) => {
                 setLoadingAuth(false);
-
+                openAlert({
+                    title: "Error",
+                    message: e.response.data.message,
+                    severity: "error"
+                })
                 return false;
             });
 

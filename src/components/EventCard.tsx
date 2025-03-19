@@ -42,7 +42,7 @@ export default function EventCard({ id, title, description, resume, thumbnail, b
                     <Box sx={{ display: "flex", flexDirection: "column", height: "100%", justifyContent: "flex-end", alignItems: "flex-start" }}>
                         <Typography sx={{ display: "flex", alignItems: "center", columnGap: 1 }}>
                             <PlaceIcon />
-                            {location ?? "No location yet."}
+                            {location ? location : "No location yet."}
                         </Typography>
                         <Typography sx={{ display: "flex", alignItems: "center", columnGap: 1 }}>
                             <EventIcon />

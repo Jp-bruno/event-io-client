@@ -19,7 +19,6 @@ export const Route = createFileRoute("/profile")({
                 return;
             })
             .catch((e) => {
-                console.log("aqui1 no beforeLoad");
                 localStorage.removeItem("event-io-userData");
                 window.location.replace("/");
             });
