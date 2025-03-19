@@ -1,4 +1,4 @@
-type EventType = {
+export type EventType = {
     id: number;
     title: string;
     thumbnail: string | null;
