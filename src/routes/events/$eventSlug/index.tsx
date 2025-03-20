@@ -166,7 +166,6 @@ function RouteComponent() {
                             </Box>
                             {user?.id === event.host_id && (
                                 <>
-                                    {/*TODO - MODAL TO EDIT THE EVENT DATA*/}
                                     <Button fullWidth variant="contained" sx={{ mt: 1 }} onClick={() => setUpdateEventModal(true)}>
                                         Update event data
                                     </Button>

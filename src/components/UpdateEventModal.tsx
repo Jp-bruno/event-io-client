@@ -6,6 +6,7 @@ import axios from "axios";
 import { useQueryClient } from "@tanstack/react-query";
 import { useAlertContext } from "../contexts/AlertContext";
 import { EventType } from "../types";
+import { useNavigate } from "@tanstack/react-router";
 
 export default function UpdateEventModal({ isOpen, close, event }: { isOpen: boolean; close: () => void; event: EventType }) {
     const [formData, setFormData] = useState({
@@ -19,6 +20,8 @@ export default function UpdateEventModal({ isOpen, close, event }: { isOpen: boo
     const [thumbnailProgress, setThumbnailProgress] = useState<null | number>(null);
     const [bannerProgress, setBannerProgress] = useState<null | number>(null);
     const [awaitAction, setAwaitAction] = useState(false);
+
+    const navigate = useNavigate()
 
     const thumbnailInputRef = useRef(document.querySelector("#thumbnail-image-input") as HTMLInputElement);
     const bannerInputRef = useRef(document.querySelector("#banner-image-input") as HTMLInputElement);
@@ -79,15 +82,21 @@ export default function UpdateEventModal({ isOpen, close, event }: { isOpen: boo
                         },
                     });
                 }
+
+                return res.data
             })
-            .then(async () => {
+            .then(async (data) => {
                 await queryClient.invalidateQueries({ queryKey: [`event-${event.slug}`] });
                 setAwaitAction(false);
-                close()
+                close();
                 openAlert({
                     title: "Success",
                     message: "Event successfully updated",
                 });
+
+                if (formData.title !== event.title) {
+                    navigate({to: `/events/${data.slug}`})
+                }
             })
             .catch((e) => {
                 setAwaitAction(false);
@@ -185,7 +194,7 @@ export default function UpdateEventModal({ isOpen, close, event }: { isOpen: boo
                                 Cancel
                             </Button>
                             <Button fullWidth variant="contained" type="submit" disabled={awaitAction}>
-                                Create
+                                Update
                             </Button>
                         </Grid2>
                     </Grid2>
