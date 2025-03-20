@@ -1,4 +1,4 @@
-import { Box, FormControl, Grid2, InputAdornment, InputLabel, OutlinedInput, Paper, Typography } from "@mui/material";
+import { Box, Button, FormControl, Grid2, InputAdornment, InputLabel, OutlinedInput, Paper, Typography } from "@mui/material";
 import { createFileRoute, useRouter } from "@tanstack/react-router";
 import SearchIcon from "@mui/icons-material/Search";
 import { FormEvent, useEffect, useState } from "react";
@@ -9,6 +9,8 @@ import { z } from "zod";
 import axiosBase from "../../axios/axiosBase";
 import LoadingPage from "../../components/LoadingPage";
 import PageBase from "../../components/PageBase";
+import useGetMoreEvents from "../../hooks/useGetMoreEvents";
+import { EventType } from "../../types";
 
 const searchSchema = z.object({
     query: z.string().optional(),
@@ -28,19 +30,62 @@ function RouteComponent() {
 
     const router = useRouter();
 
+    const [page, setPage] = useState(1);
+
+    const [awaitAction, setAwaitAction] = useState(false);
+
+    const getMoreEvents = useGetMoreEvents(page, query);
+
     const { data: queriedEvents, isLoading } = useQuery({
         queryKey: ["query-events"],
         queryFn: async () => {
             if (queryString.length === 0) {
-                return await axiosBase("/event?limit=4").then((res) => res.data);
+                return await axiosBase("/event?limit=4&offset=0").then((res) => {
+                    if (res.data.length < 4) {
+                        setAwaitAction(true);
+                        return res.data;
+                    }
+
+                    setAwaitAction(false);
+                    return res.data;
+                });
             }
 
-            return await axiosBase(`/event?query=${queryString}`).then((res) => res.data);
+            return await axiosBase(`/event?query=${queryString}&limit=4&offset=0`).then((res) => {
+                if (res.data.length < 4) {
+                    setAwaitAction(true);
+                    return res.data;
+                }
+
+                setAwaitAction(false);
+                return res.data;
+            });
         },
     });
 
+    async function handleGetMoreEvents() {
+        setAwaitAction(true);
+
+        await getMoreEvents().then((data) => {
+            queryClient.setQueryData(["query-events"], (oldEvents: EventType[]) => {
+                return [...oldEvents, ...data];
+            });
+
+            setPage((prev) => prev + 1);
+
+            if (data.length < 4) {
+                setAwaitAction(true);
+                return;
+            }
+
+            setAwaitAction(false);
+        });
+    }
+
     async function handleSubmitSearchForm(ev: FormEvent<HTMLFormElement>) {
         ev.preventDefault();
+
+        setPage(1);
 
         if (queryString) {
             router.navigate({ to: "/events", search: { query: queryString } });
@@ -81,6 +126,11 @@ function RouteComponent() {
                         </Typography>
                         {queriedEvents && queriedEvents.length > 0 && <EventsList events={queriedEvents} />}
                         {queriedEvents && queriedEvents.length === 0 && <Typography>Your search returned no results.</Typography>}
+                        <Box sx={{ mt: 10, display: "flex", justifyContent: "center", width: { xs: "50%" }, marginInline: "auto" }}>
+                            <Button variant="contained" fullWidth size="large" onClick={handleGetMoreEvents} disabled={awaitAction}>
+                                More events
+                            </Button>
+                        </Box>
                     </Box>
                 </Box>
             </BaseContainer>
