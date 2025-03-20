@@ -1,5 +1,6 @@
 import { Box } from "@mui/material";
 import EventCard from "./EventCard";
+import { EventType } from "../types";
 
 export default function EventsList({
     events,

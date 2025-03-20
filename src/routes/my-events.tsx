@@ -11,6 +11,8 @@ import SearchIcon from "@mui/icons-material/Search";
 import LoadingPage from "../components/LoadingPage";
 import { Add } from "@mui/icons-material";
 import CreateEventModal from "../components/CreateEventModal";
+import useGetMoreUserEvents from "../hooks/useGetMoreUserEvents";
+import { EventType } from "../types";
 
 const searchSchema = z.object({
     query: z.string().optional(),
@@ -22,12 +24,11 @@ export const Route = createFileRoute("/my-events")({
     beforeLoad: async () => {
         await axiosBase("/auth/status")
             .then((res) => {
-                return
+                return;
             })
             .catch((e) => {
-                console.log("aqui1 no beforeLoad")
                 localStorage.removeItem("event-io-userData");
-                window.location.replace("/")
+                window.location.replace("/");
             });
     },
 });
@@ -36,8 +37,11 @@ function RouteComponent() {
     const { query } = Route.useSearch();
 
     const [queryString, setQueryString] = useState(query ?? "");
-
+    const [page, setPage] = useState(1);
+    const [awaitAction, setAwaitAction] = useState(false);
     const [createEventModalState, setCreateEventModalState] = useState(false);
+
+    const getMoreUserEvets = useGetMoreUserEvents(page, queryString);
 
     const queryClient = useQueryClient();
 
@@ -47,15 +51,33 @@ function RouteComponent() {
         queryKey: ["user-events"],
         queryFn: async () => {
             if (queryString.length === 0) {
-                return await axiosBase("/user-events?limit=4").then((res) => res.data);
+                return await axiosBase("/user-events?limit=4&offset=0").then((res) => {
+                    if (res.data.length < 4) {
+                        setAwaitAction(true);
+                        return res.data;
+                    }
+
+                    setAwaitAction(false);
+                    return res.data;
+                });
             }
 
-            return await axiosBase(`/user-events?query=${queryString}`).then((res) => res.data);
+            return await axiosBase(`/user-events?query=${queryString}&limit=4&offset=0`).then((res) => {
+                if (res.data.length < 4) {
+                    setAwaitAction(true);
+                    return res.data;
+                }
+
+                setAwaitAction(false);
+                return res.data;
+            });
         },
     });
 
     async function handleSubmitSearchForm(ev: FormEvent<HTMLFormElement>) {
         ev.preventDefault();
+
+        setPage(1);
 
         if (queryString) {
             router.navigate({ to: "/my-events", search: { query: queryString } });
@@ -65,6 +87,20 @@ function RouteComponent() {
 
         await queryClient.invalidateQueries({ queryKey: ["user-events"] });
         router.navigate({ to: "/my-events" });
+    }
+
+    async function handleGetMoreEvents() {
+        setAwaitAction(true);
+
+        await getMoreUserEvets().then((data) => {
+            queryClient.setQueryData(["user-events"], (oldEvents: EventType[]) => {
+                setPage((prev) => prev + 1);
+
+                setAwaitAction(data.length < 4);
+
+                return [...oldEvents, ...data];
+            });
+        });
     }
 
     if (isLoading) {
@@ -101,6 +137,11 @@ function RouteComponent() {
                         </Typography>
                         {queriedEvents && queriedEvents.length > 0 && <EventsList events={queriedEvents} />}
                         {queriedEvents && queriedEvents.length === 0 && <Typography>Your search returned no results.</Typography>}
+                    </Box>
+                    <Box sx={{ mt: 10, display: "flex", justifyContent: "center", width: { xs: "50%" }, marginInline: "auto" }}>
+                        <Button variant="contained" fullWidth size="large" onClick={handleGetMoreEvents} disabled={awaitAction}>
+                            More events
+                        </Button>
                     </Box>
                 </Box>
                 <CreateEventModal isOpen={createEventModalState} close={() => setCreateEventModalState(false)} />

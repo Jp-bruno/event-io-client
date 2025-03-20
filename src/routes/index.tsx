@@ -1,8 +1,16 @@
 import { createFileRoute, useRouter } from "@tanstack/react-router";
-import { Box, Button, Container, Grid2, Typography } from "@mui/material";
+import { Box, Button, Grid2, Typography } from "@mui/material";
 import BaseContainer from "../components/BaseContainer";
 import styled from "@emotion/styled";
 import EventsList from "../components/EventsList";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
+import axiosBase from "../axios/axiosBase";
+import { useAuthContext } from "../contexts/AuthContext";
+import { useLoginModalContext } from "../contexts/LoginModalContext";
+import PageBase from "../components/PageBase";
+import { useState } from "react";
+import useGetMoreEvents from "../hooks/useGetMoreEvents";
+import { EventType } from "../types";
 
 export const Route = createFileRoute("/")({
     component: HomeComponent,
@@ -61,20 +69,21 @@ const StyledImg = styled.img`
     animation-duration: 1s;
     animation-fill-mode: forwards;
 `;
-import AutoAwesomeIcon from "@mui/icons-material/AutoAwesome";
-import { useQuery } from "@tanstack/react-query";
-import axiosBase from "../axios/axiosBase";
-import { useAuthContext } from "../contexts/AuthContext";
-import { useLoginModalContext } from "../contexts/LoginModalContext";
-import { theme } from "../theme";
-import PageBase from "../components/PageBase";
 
 function HomeComponent() {
     const router = useRouter();
 
     const { isAuth } = useAuthContext();
 
+    const [page, setPage] = useState(1);
+
+    const [awaitAction, setAwaitAction] = useState(false);
+
     const { openModal } = useLoginModalContext();
+
+    const getMoreEvents = useGetMoreEvents(page);
+
+    const queryClient = useQueryClient();
 
     function handleClick(path: string) {
         router.navigate({ to: path });
@@ -86,6 +95,24 @@ function HomeComponent() {
             return await axiosBase("/event?limit=4").then((res) => res.data);
         },
     });
+
+    async function handleGetMoreEvents() {
+        setAwaitAction(true);
+
+        await getMoreEvents().then((data) => {
+            queryClient.setQueryData(["query-events"], (oldEvents: EventType[]) => {
+                return [...oldEvents, ...data];
+            });
+            setPage((prev) => prev + 1);
+
+            if (data.length < 4) {
+                setAwaitAction(true);
+                return
+            }
+
+            setAwaitAction(false);
+        });
+    }
 
     return (
         <PageBase>
@@ -108,7 +135,9 @@ function HomeComponent() {
                                     variant="contained"
                                     color={"secondary"}
                                     size="large"
-                                    onClick={() => (isAuth ? handleClick("/my-events") : openModal("login", "You need to be logged in to create a event."))}
+                                    onClick={() =>
+                                        isAuth ? handleClick("/my-events") : openModal("login", "You need to be logged in to create a event.")
+                                    }
                                 >
                                     Create your event
                                 </Button>
@@ -122,6 +151,11 @@ function HomeComponent() {
                         See what's happening now
                     </StyledT>
                     {!isLoading && <EventsList events={events} />}
+                    <Box sx={{ mt: 10, display: "flex", justifyContent: "center", width: { xs: "50%" }, marginInline: "auto" }}>
+                        <Button variant="contained" fullWidth size="large" onClick={handleGetMoreEvents} disabled={awaitAction}>
+                            More events
+                        </Button>
+                    </Box>
                 </Box>
             </BaseContainer>
         </PageBase>
