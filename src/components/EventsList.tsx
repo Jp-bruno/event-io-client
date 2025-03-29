@@ -8,7 +8,7 @@ export default function EventsList({
     events: EventType[];
 }) {
     return (
-        <Box sx={{ display: "flex", flexWrap: "wrap", gap: 2, width: { xs: 350, md: 750, lg: "100%" } }}>
+        <Box sx={{ display: "flex", flexWrap: "wrap", gap: 2, width: { xs: 350, md: 750, lg: "100%" }, marginInline: "auto" }}>
             {events.map((event) => (
                 <EventCard
                     key={event.id}

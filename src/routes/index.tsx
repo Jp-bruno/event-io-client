@@ -23,53 +23,6 @@ const StyledT = styled(Typography)`
     margin: 16px 0;
 `;
 
-const StyledImg = styled.img`
-    width: 50%;
-    position: absolute;
-    border-radius: 8px;
-    opacity: 0;
-    top: 0%;
-    transition: opacity 1s ease;
-
-    &.img-1 {
-        animation-name: fade-in-img1;
-        animation-delay: 1.5s;
-        left: 40%;
-        bottom: -300%;
-    }
-
-    &.img-2 {
-        animation-name: fade-in-img2;
-        bottom: -200%;
-        animation-delay: 1s;
-    }
-
-    @keyframes fade-in-img1 {
-        0% {
-            top: -20%;
-        }
-
-        100% {
-            top: 0%;
-            opacity: 1;
-        }
-    }
-
-    @keyframes fade-in-img2 {
-        0% {
-            top: -20%;
-        }
-
-        100% {
-            top: 50%;
-            opacity: 1;
-        }
-    }
-
-    animation-duration: 1s;
-    animation-fill-mode: forwards;
-`;
-
 function HomeComponent() {
     const router = useRouter();
 
@@ -107,7 +60,7 @@ function HomeComponent() {
 
             if (data.length < 4) {
                 setAwaitAction(true);
-                return
+                return;
             }
 
             setAwaitAction(false);
@@ -117,36 +70,57 @@ function HomeComponent() {
     return (
         <PageBase>
             <BaseContainer>
-                <Box sx={{ display: "flex", alignItems: "center", height: "100vh" }}>
-                    <Grid2 container sx={{ width: "100%" }} spacing={"auto"}>
-                        <Grid2 size={7}>
-                            <StyledT variant="h6" sx={{ mb: 2 }}>
-                                Your favorite events platform
-                            </StyledT>
-                            <StyledT variant="h2" fontWeight={600}>
-                                Discover and share events
-                            </StyledT>
-                            <StyledT variant="h4">Explore, engage and join events that bring people together.</StyledT>
-                            <Box sx={{ display: "flex", columnGap: 1 }}>
-                                <Button variant="contained" size="large" onClick={() => handleClick("/events")}>
-                                    Explore now
-                                </Button>
-                                <Button
-                                    variant="contained"
-                                    color={"secondary"}
-                                    size="large"
-                                    onClick={() =>
-                                        isAuth ? handleClick("/my-events") : openModal("login", "You need to be logged in to create a event.")
-                                    }
-                                >
-                                    Create your event
-                                </Button>
-                            </Box>
-                        </Grid2>
-                    </Grid2>
+                <Box
+                    sx={{
+                        display: "flex",
+                        flexDirection: "column",
+                        alignItems: "center",
+                        height: { xs: "80vh", md: "100vh" },
+                        paddingTop: { xs: "20vh", md: 0 },
+                        justifyContent: "center",
+                        textAlign: "center",
+                        gap: 5,
+                    }}
+                >
+                    <Box>
+                        <StyledT variant="h6" sx={{ mb: 2, fontSize: "1.5rem" }}>
+                            Your favorite events platform
+                        </StyledT>
+                        <StyledT variant="h2" fontWeight={600} sx={{ fontSize: { xs: "3rem", md: "3.5rem", lg: "4rem" } }}>
+                            Discover and share events
+                        </StyledT>
+                        <StyledT variant="h4" sx={{ fontSize: { xs: "1.5rem", md: "2rem" } }}>
+                            Explore, engage and join events that bring people together.
+                        </StyledT>
+                    </Box>
+                    <Box
+                        sx={{
+                            display: "flex",
+                            gap: 1,
+                            flexDirection: { xs: "column", md: "row", lg: "row" },
+                        }}
+                    >
+                        <Button
+                            variant="contained"
+                            size="large"
+                            onClick={() => handleClick("/events")}
+                            sx={{ fontSize: { xs: "1.2rem", md: "1rem" } }}
+                        >
+                            Explore events now
+                        </Button>
+                        <Button
+                            variant="contained"
+                            color={"secondary"}
+                            size="large"
+                            onClick={() => (isAuth ? handleClick("/my-events") : openModal("login", "You need to be logged in to create a event."))}
+                            sx={{ fontSize: { xs: "1.2rem", md: "1rem" } }}
+                        >
+                            Host your event
+                        </Button>
+                    </Box>
                 </Box>
 
-                <Box sx={{ display: "flex", justifyContent: "center", flexDirection: "column", py: 15 }}>
+                <Box sx={{ display: "flex", justifyContent: "center", flexDirection: "column", paddingBottom: 15, paddingTop: { xs: 0, md: 15 } }}>
                     <StyledT variant="h3" sx={{ paddingBottom: 3, textAlign: "center" }}>
                         See what's happening now
                     </StyledT>

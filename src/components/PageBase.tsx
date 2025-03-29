@@ -7,12 +7,12 @@ export default function PageBase({ children, sx }: { children: ReactNode; sx?: S
             <Box
                 sx={{
                     backgroundImage: `url('/home_waves2.svg')`,
-                    backgroundSize: "70%",
+                    backgroundSize: { xs: "100%", md: "70%" },
                     backgroundPositionX: "100%",
                     backgroundRepeat: "no-repeat",
                     backgroundColor: "#F2A90040",
                     minHeight: "100vh",
-                    ...sx
+                    ...sx,
                 }}
             >
                 {children}
@@ -24,7 +24,7 @@ export default function PageBase({ children, sx }: { children: ReactNode; sx?: S
         <Box
             sx={{
                 backgroundImage: `url('/home_waves2.svg')`,
-                backgroundSize: "70%",
+                backgroundSize: { xs: "100%", md: "70%" },
                 backgroundPositionX: "100%",
                 backgroundRepeat: "no-repeat",
                 backgroundColor: "#F2A90040",

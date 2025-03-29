@@ -30,37 +30,6 @@ export default function Header() {
         router.navigate({ to: route });
     }
 
-    if (isAuth) {
-        return (
-            <Box
-                sx={{
-                    py: 2,
-                    boxShadow: "0px 9px 93px 0px rgba(0,0,0,0.75)",
-                    position: "fixed",
-                    width: "100vw",
-                    backgroundColor: "rgb(252, 233, 191)",
-                    zIndex: 10,
-                }}
-            >
-                <BaseContainer sx={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-                    <Link to="/">
-                        <img src={"/default-monochrome.svg"} alt="Event-io" width={200} />
-                    </Link>
-
-                    <Box sx={{ display: "flex", columnGap: 1 }}>
-                        <Button variant="outlined" size="small" onClick={() => handleNavigate("/my-events")}>
-                            My events
-                        </Button>
-                        <Button variant="outlined" size="small" onClick={() => handleNavigate("/profile")}>
-                            Profile
-                        </Button>
-                        <TooltipIconButton text="Sign out" icon={<LogoutIcon />} cb={logout} sx={{ marginLeft: 5 }} />
-                    </Box>
-                </BaseContainer>
-            </Box>
-        );
-    }
-
     return (
         <Box
             sx={{
@@ -77,14 +46,26 @@ export default function Header() {
                     <img src={"/default-monochrome.svg"} alt="Event-io" width={200} />
                 </Link>
 
-                <Box sx={{ display: "flex", columnGap: 1 }}>
-                    <Button variant="contained" size="small" onClick={openSignUp}>
-                        Sign up
-                    </Button>
-                    <Button variant="outlined" size="small" onClick={openLogin}>
-                        Sign in
-                    </Button>
-                </Box>
+                {isAuth ? (
+                    <Box sx={{ display: "flex", columnGap: 1 }}>
+                        <Button variant="outlined" size="small" onClick={() => handleNavigate("/my-events")}>
+                            My events
+                        </Button>
+                        <Button variant="outlined" size="small" onClick={() => handleNavigate("/profile")}>
+                            Profile
+                        </Button>
+                        <TooltipIconButton text="Sign out" icon={<LogoutIcon />} cb={logout} sx={{ marginLeft: 5 }} />
+                    </Box>
+                ) : (
+                    <Box sx={{ display: "flex", columnGap: 1 }}>
+                        <Button variant="contained" size="small" onClick={openSignUp}>
+                            Sign up
+                        </Button>
+                        <Button variant="outlined" size="small" onClick={openLogin}>
+                            Sign in
+                        </Button>
+                    </Box>
+                )}
             </BaseContainer>
         </Box>
     );
